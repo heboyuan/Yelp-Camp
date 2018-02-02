@@ -1,58 +1,114 @@
-var mongoose = require("mongoose");
-var Campground = require("./models/campground");
-var Comment   = require("./models/comment");
+var Campground = require('./models/campground'),
+  Comment = require('./models/comment'),
+  User = require('./models/user');
 
-var data = [
-    {
-        name: "Cloud's Rest", 
-        image: "https://farm4.staticflickr.com/3795/10131087094_c1c0a1c859.jpg",
-        description: "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum"
+var campgroundData = [
+  {
+    name: 'Salmons Creek',
+    image: 'https://farm6.staticflickr.com/5479/11694969344_42dff96680.jpg',
+    description: "Great place to go fishin' Bacon ipsum dolor amet kielbasa cow"
     },
-    {
-        name: "Desert Mesa", 
-        image: "https://farm6.staticflickr.com/5487/11519019346_f66401b6c1.jpg",
-        description: "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum"
+  {
+    name: 'Granite Hills',
+    image: 'https://farm5.staticflickr.com/4103/5088123249_5f24c3202c.jpg',
+    description: "It's just a hill.  Made of granite.  Nothing more! Cow doner."
     },
-    {
-        name: "Canyon Floor", 
-        image: "https://farm1.staticflickr.com/189/493046463_841a18169e.jpg",
-        description: "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum"
+  {
+    name: 'Wildwood Campground',
+    image: 'https://farm5.staticflickr.com/4016/4369518024_0f64300987.jpg',
+    description: 'All campsites.  All the time.Short ribs pastrami drumstick.'
+    },
+  {
+    name: 'Lake Fooey',
+    image: 'https://farm7.staticflickr.com/6138/6042439726_9efecf8348.jpg',
+    description: 'Hills and lakes and lakes and hills.  Pork ribeye pork chop.'
     }
-]
+];
 
-function seedDB(){
-   //Remove all campgrounds
-   Campground.remove({}, function(err){
-        if(err){
-            console.log(err);
-        }
-        console.log("removed campgrounds!");
-         //add a few campgrounds
-        data.forEach(function(seed){
-            Campground.create(seed, function(err, campground){
-                if(err){
-                    console.log(err)
-                } else {
-                    console.log("added a campground");
-                    //create a comment
-                    Comment.create(
-                        {
-                            text: "This place is great, but I wish there was internet",
-                            author: "Homer"
-                        }, function(err, comment){
-                            if(err){
-                                console.log(err);
-                            } else {
-                                campground.comments.push(comment);
-                                campground.save();
-                                console.log("Created new comment");
-                            }
-                        });
-                }
+var commentData1 = [
+  {
+    text: 'This place is great',
+    author: 'Homer'
+    },
+  {
+    text: '. . .',
+    author: 'Maggie'
+    },
+  {
+    text: '*plays sax*',
+    author: 'Lisa'
+    },
+  {
+    text: 'Cowabunga',
+    author: 'Bart'
+    }
+];
+
+var commentData2 = [
+  {
+    text: 'Fish for dinner!',
+    author: 'Marge'
+    },
+  {
+    text: '*falls on rock*',
+    author: 'Grandpa Simpson'
+    },
+  {
+    text: 'I found a bug!',
+    author: 'Ralph'
+    },
+  {
+    text: 'Too much water!',
+    author: 'Apu'
+    }
+];
+
+function seedDB() {
+  Campground.remove({}, function(err) {
+    if (err) {
+      console.log(err);
+    } else {
+      console.log('Removed campgrounds!');
+      Comment.remove({}, function(err) {
+        if (err) {
+          console.log(err);
+        } else {
+          campgroundData.forEach(function(seed, thisArg) {
+            Campground.create(seed, function(err, campgroundResponse) {
+              if (err) {
+                console.log(err);
+              } else {
+                Comment.create(commentData1[thisArg], function(err, comment) {
+                  if (err) {
+                    console.log(err);
+                  } else {
+                    campgroundResponse.comments.push(comment);
+                  }
+                });
+                Comment.create(commentData2[thisArg], function(err, comment2) {
+                  if (err) {
+                    console.log(err);
+                  } else {
+                    campgroundResponse.comments.push(comment2);
+                    campgroundResponse.save();
+                  }
+                });
+              }
             });
-        });
-    }); 
-    //add a few comments
+            console.log('Added campground');
+          });
+        }
+      });
+    }
+  });
+  User.remove({}, function(err) {
+    if (err) {
+      console.log(err);
+    } else {
+      console.log('User database cleared');
+    }
+  });
+
 }
 
 module.exports = seedDB;
