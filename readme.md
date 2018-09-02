@@ -1,3 +1,3 @@
-YelpCamp Project
+# YelpCamp
 
-Share your campground
+A Nodejs website where you can search, share, and comment on campgrounds
